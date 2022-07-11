@@ -41,8 +41,22 @@ body {
   grid-template-rows: repeat(6, 1fr);
 }
 
+.display {
+  grid-column: span 4;
+  text-align: right;
+}
+
+.output {
+  height: 2rem;
+  font-size: 2rem;
+  color: orange;
+}
+
 .key {
+  border: none;
   font-family: Play, sans-serif;
+  font-size: 1.75rem;
+  color: white;
   display: grid;
   place-content: center;
   border-radius: 3px;
@@ -60,40 +74,40 @@ body {
   border: 1px solid orangered;
 }
 
-.display {
-  grid-column: span 4;
-  text-align: right;
-}
-
-.input-screen {
-  min-height: 1.5rem;
-}
-
-.output-screen {
-  font-size: 2rem;
-  color: orange;
-}
-
-.span-two-columns {
+.clear,
+.zero {
   grid-column: span 2;
 }
 
-.span-two-rows {
+.equals {
   grid-row: span 2;
 }
 
-.tomato {
+.clear {
   background-color: #ff6347;
 }
 
-.blue {
+.equals {
   background-color: #009cb8;
 }
 
-.dark-gray {
+.one,
+.two,
+.three,
+.four,
+.five,
+.six,
+.seven,
+.eight,
+.nine,
+.zero,
+.decimal {
   background-color: #696969;
 }
 
-.light-gray {
+.add,
+.divide,
+.multiply,
+.subtract {
   background-color: #a9a9a9;
 }

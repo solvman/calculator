@@ -1,154 +1,131 @@
 import React from "react";
 import { useState } from "react";
+import Display from "./Display";
+import Keypad from "./Keypad";
 
 function Calculator() {
-  const [result, setResult] = useState("0");
-  const [expression, setExpression] = useState("");
+  const NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const OPERATORS = ["/", "x", "-", "+", "*"];
 
-  const handleNumberClick = (number) => {
-    setExpression((prev) => prev.concat(number));
-  };
+  const [input, setInput] = useState("0");
+  const [output, setOutput] = useState("");
 
-  const handleEqualClick = () => {
+  const handleEqual = () => {
     // eslint-disable-next-line no-eval
-    const result = eval(expression);
-    setResult(result.toString());
-    setExpression((prev) => prev.concat("="));
+    const result = eval(output);
+
+    setInput(`${result}`);
+    setOutput(`${result}`);
   };
 
-  const handleClearClick = () => {
-    setResult("0");
-    setExpression("");
+  const handleClear = () => {
+    setInput("0");
+    setOutput("");
   };
+
+  const handleOperator = (operator) => {
+    if (output.length) {
+      setInput(`${operator}`);
+
+      const beforeLastCharIsOperator = OPERATORS.includes(
+        output.charAt(output.length - 2)
+      );
+      const lastCharIsOperator = OPERATORS.includes(
+        output.charAt(output.length - 1)
+      );
+      const validatedOperator = operator === "x" ? "*" : operator;
+
+      if (
+        (lastCharIsOperator && operator !== "-") ||
+        (lastCharIsOperator && beforeLastCharIsOperator)
+      ) {
+        if (beforeLastCharIsOperator) {
+          setOutput(
+            `${output.substring(0, output.length - 2)}${validatedOperator}`
+          );
+        } else {
+          setOutput(
+            `${output.substring(0, output.length - 1)}${validatedOperator}`
+          );
+        }
+      } else {
+        setOutput(`${output}${validatedOperator}`);
+      }
+    }
+  };
+
+  const handleDecimal = () => {
+    const lastCharacter = output.charAt(output.length - 1);
+
+    if (!output.length) {
+      setInput("0.");
+      setOutput("0.");
+    } else {
+      if (OPERATORS.includes(lastCharacter)) {
+        setInput("0.");
+        setOutput(`${output} 0.`);
+      } else {
+        setInput(
+          lastCharacter === "." || input.includes(".")
+            ? `${input}`
+            : `${input}.`
+        );
+
+        setOutput(
+          lastCharacter === "." || input.includes(".")
+            ? `${output}`
+            : `${output}.`
+        );
+      }
+    }
+  };
+
+  const handleNumber = (number) => {
+    if (!output.length) {
+      setInput(`${number}`);
+      setOutput(`${number}`);
+    } else {
+      if (number === 0 && (output === "0" || input === "0")) {
+        setOutput(output);
+      } else {
+        const lastCharacter = output.charAt(output.length - 1);
+        const isLastCharacterOperator = OPERATORS.includes(lastCharacter);
+
+        setInput(isLastCharacterOperator ? `${number}` : `${input}${number}`);
+        setOutput(`${output}${number}`);
+      }
+    }
+  };
+
+  const handleClick = (value) => {
+    const number = NUMBERS.find((item) => item === value);
+    const operator = OPERATORS.find((item) => item === value);
+
+    switch (value) {
+      case "=":
+        handleEqual();
+        break;
+      case "AC":
+        handleClear();
+        break;
+      case ".":
+        handleDecimal();
+        break;
+      case operator:
+        handleOperator(operator);
+        break;
+      case number:
+        handleNumber(number);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="calculator">
-      <div className="display" id="display">
-        <div className="input-screen" id="display">
-          {expression}
-        </div>
-        <div className="output-screen" id="display">
-          {result}
-        </div>
-      </div>
-      <div
-        onClick={handleClearClick}
-        className="key clear span-two-columns tomato"
-        id="clear"
-      >
-        AC
-      </div>
-      <div
-        onClick={() => handleNumberClick("/")}
-        className="key divide light-gray"
-        id="divide"
-      >
-        /
-      </div>
-      <div
-        onClick={() => handleNumberClick("*")}
-        className="key multiply light-gray"
-        id="multiply"
-      >
-        x
-      </div>
-      <div
-        onClick={() => handleNumberClick("7")}
-        className="key seven dark-gray"
-        id="seven"
-      >
-        7
-      </div>
-      <div
-        onClick={() => handleNumberClick("8")}
-        className="key eight dark-gray"
-        id="eight"
-      >
-        8
-      </div>
-      <div
-        onClick={() => handleNumberClick("9")}
-        className="key nine dark-gray"
-        id="nine"
-      >
-        9
-      </div>
-      <div
-        onClick={() => handleNumberClick("-")}
-        className="key substract light-gray"
-        id="subtract"
-      >
-        -
-      </div>
-      <div
-        onClick={() => handleNumberClick("4")}
-        className="key four dark-gray"
-        id="four"
-      >
-        4
-      </div>
-      <div
-        onClick={() => handleNumberClick("5")}
-        className="key five dark-gray"
-        id="five"
-      >
-        5
-      </div>
-      <div
-        onClick={() => handleNumberClick("6")}
-        className="key six dark-gray"
-        id="six"
-      >
-        6
-      </div>
-      <div
-        onClick={() => handleNumberClick("+")}
-        className="key add light-gray"
-        id="add"
-      >
-        +
-      </div>
-      <div
-        onClick={() => handleNumberClick("1")}
-        className="key one dark-gray"
-        id="one"
-      >
-        1
-      </div>
-      <div
-        onClick={() => handleNumberClick("2")}
-        className="key two dark-gray"
-        id="two"
-      >
-        2
-      </div>
-      <div
-        onClick={() => handleNumberClick("3")}
-        className="key three dark-gray"
-        id="three"
-      >
-        3
-      </div>
-      <div
-        onClick={handleEqualClick}
-        className="key equal span-two-rows blue"
-        id="equals"
-      >
-        =
-      </div>
-      <div
-        onClick={() => handleNumberClick("0")}
-        className="key zero span-two-columns dark-gray"
-        id="zero"
-      >
-        0
-      </div>
-      <div
-        onClick={() => handleNumberClick(".")}
-        className="key decimal dark-gray"
-        id="decimal"
-      >
-        .
-      </div>
+      <Display input={input} output={output} />
+      <Keypad handleClick={handleClick} />
     </div>
   );
 }
